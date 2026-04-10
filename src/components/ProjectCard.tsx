@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, MapPin, Users, TrendingUp } from 'lucide-react';
+import { ChevronDown, MapPin, Users, } from 'lucide-react';
 import { Project } from '../types';
 
 interface ProjectCardProps {
