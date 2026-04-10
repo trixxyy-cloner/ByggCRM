@@ -41,7 +41,7 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
   return (
     <div
       onClick={handleCardClick}
-      className={`border-l-4 border-l-blue-500 rounded-lg p-6 shadow-sm hover:shadow-md transition-all cursor-pointer ${
+      className={`border-l-4 border-l-blue-500 rounded-lg p-6 shadow-sm hover-lift transition-all cursor-pointer ${
         // === CONDITIONAL STYLING: Active/Expanded state ===
         isExpanded ? 'ring-2 ring-blue-300 bg-blue-50' : 'bg-white'
       }`}

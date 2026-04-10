@@ -30,7 +30,7 @@ export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
   return (
     <div
       onClick={handleCardClick}
-      className="border-t-4 border-t-blue-500 rounded-lg bg-white p-6 shadow-sm hover:shadow-md transition-all cursor-pointer"
+      className="border-t-4 border-t-blue-500 rounded-lg bg-white p-6 shadow-sm hover-lift transition-all cursor-pointer"
     >
       {/* === HEADER: Customer Name with Badge === */}
       <div className="flex items-start justify-between mb-4">

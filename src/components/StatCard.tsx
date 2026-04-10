@@ -76,7 +76,7 @@ export default function StatCard({
 
   return (
     <div
-      className={`border-l-4 ${colorStyles[color]} rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer`}
+      className={`border-l-4 ${colorStyles[color]} rounded-lg p-6 shadow-sm hover-lift hover:shadow-md transition-shadow cursor-pointer`}
     >
       {/* === HEADER: Title with Icon === */}
       <div className="flex items-center justify-between mb-4">
