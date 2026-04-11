@@ -60,17 +60,4 @@ App läser localStorage vid start och uppdaterar stats automatiskt.
 Tailwind CSS för styling av alla komponenter.
 
 ### Krav 16: CSS Animations (5p) ✅
-fadeIn, slideInLeft, hover-lift och transitions i animations.css.
-
----
-
-## POÄNGSUMMERING
-
-**App-krav**: 75/75p ✅
-**Source Code**: 37/42p (väntar på deploy)
-
-**TOTALT**: 112/117p
-
----
-
-**Skapad**: 10 april 2026
+fadeIn, slideInLeft, hover-lift och transitions i animations.css
