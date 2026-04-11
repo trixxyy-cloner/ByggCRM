@@ -129,9 +129,8 @@ Detta startar en lokal server som serverar produktionsbygget.
 
 ### Produktions-URL
 
-**[Distribueras snart på Digital Ocean]**
+**https://byggcrm-app-wgu3p.ondigitalocean.app/**
 
-Applikationen distribueras på Digital Ocean och är tillgänglig på ovanstående URL när den är aktiverad.
 
 ## 📦 Beroenden
 
