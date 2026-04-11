@@ -61,7 +61,7 @@ export default function App() {
       {/* === HEADER - Search and notifications === */}
       <Header onSearch={handleSearch} />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
         {/* === SIDEBAR - Navigation between views === */}
         <Sidebar currentView={currentView} onViewChange={handleViewChange} />
 

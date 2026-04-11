@@ -20,7 +20,7 @@ export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
   };
 
   return (
-    <aside className="w-72 bg-white border-r border-gray-200 shadow-sm min-h-[calc(100vh-81px)] animate-slide-in-left">
+    <aside className="hidden md:block md:w-72 bg-white border-r border-gray-200 shadow-sm md:min-h-[calc(100vh-81px)]">
       <nav className="p-4 space-y-2">
         {/* === RENDER NAVIGATION BUTTONS === */}
         {menuItems.map((item) => {
