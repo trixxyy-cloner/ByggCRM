@@ -24,7 +24,7 @@ export default function DashboardView({
       </div>
 
       {/* === STATS GRID (4 columns) === */}
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Active Projects"
           value={stats.activeProjects}
@@ -60,7 +60,7 @@ export default function DashboardView({
       </div>
 
       {/* === CONTENT GRID (2 columns) === */}
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-4 md:gap-8 grid-cols-1 lg:grid-cols-2">
         {/* === ONGOING PROJECTS SECTION === */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
