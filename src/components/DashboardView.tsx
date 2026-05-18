@@ -59,6 +59,39 @@ export default function DashboardView({
         />
       </div>
 
+      {/* === QUICK STATS CARD === */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-8 border border-blue-100">
+        <h3 className="text-lg font-semibold text-gray-900 mb-6">Quick Stats</h3>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-600 font-medium">Active Projects</span>
+            <span className="text-2xl font-bold text-blue-600">{stats.activeProjects}</span>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-gray-600 font-medium">Total Customers</span>
+            <span className="text-2xl font-bold text-green-600">{stats.totalCustomers}</span>
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-gray-600 font-medium">Revenue</span>
+            <span className="text-2xl font-bold text-purple-600">
+              {(stats.totalRevenue / 1000000).toFixed(1)}M
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-gray-600 font-medium">Completed Projects</span>
+            <span className="text-2xl font-bold text-gray-600">{stats.completedProjects}</span>
+          </div>
+        </div>
+
+        <button className="w-full mt-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
+          View More
+        </button>
+      </div>
+
       {/* === CONTENT GRID (2 columns) === */}
       <div className="grid gap-4 md:gap-8 grid-cols-1 lg:grid-cols-2">
         {/* === ONGOING PROJECTS SECTION === */}

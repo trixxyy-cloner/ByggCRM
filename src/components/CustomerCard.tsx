@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Briefcase } from 'lucide-react';
-import { Customer } from '../types';
+import { CustomerDto } from '../services/customerService';
 
 interface CustomerCardProps {
-  customer: Customer;
+  customer: CustomerDto;
+  onUpdateCustomer?: (id: string, customer: CustomerDto) => Promise<void>;
+  onDeleteCustomer?: (id: string) => Promise<void>;
   onClick?: () => void;
 }
 

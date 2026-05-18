@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import ProjectCard from './ProjectCard';
-import { Project } from '../types';
+import { ProjectDto } from '../services/projectService';
 
 interface ProjectsViewProps {
-  projects: Project[];
-  onProjectsUpdate: (projects: Project[]) => void;
+  projects: ProjectDto[];
+  onProjectsUpdate: (projects: ProjectDto[]) => void;
+  onCreateProject: (project: ProjectDto) => Promise<void>;
+  onUpdateProject: (id: string, project: ProjectDto) => Promise<void>;
+  onDeleteProject: (id: string) => Promise<void>;
 }
 
-export default function ProjectsView({ projects, onProjectsUpdate }: ProjectsViewProps) {
+export default function ProjectsView({ projects, onProjectsUpdate, onCreateProject, onUpdateProject, onDeleteProject }: ProjectsViewProps) {
   // === STATE: Filter projects by status ===
   const [statusFilter, setStatusFilter] = useState<'all' | 'planning' | 'ongoing' | 'completed'>('all');
 
@@ -16,8 +19,8 @@ export default function ProjectsView({ projects, onProjectsUpdate }: ProjectsVie
   const filteredProjects = statusFilter === 'all' ? projects : projects.filter((p) => p.status === statusFilter);
 
   // === EVENT HANDLER: Add new project (demo) ===
-  const handleAddProject = () => {
-    const newProject: Project = {
+  const handleAddProject = async () => {
+    const newProject: ProjectDto = {
       id: String(Date.now()),
       name: 'New Project',
       client: 'Client Name',
@@ -29,6 +32,7 @@ export default function ProjectsView({ projects, onProjectsUpdate }: ProjectsVie
       progress: 0,
       team: [],
     };
+    await onCreateProject(newProject);
     onProjectsUpdate([...projects, newProject]);
   };
 
@@ -71,7 +75,7 @@ export default function ProjectsView({ projects, onProjectsUpdate }: ProjectsVie
       {filteredProjects.length > 0 ? (
         <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard key={project.id} project={project} onUpdateProject={onUpdateProject} onDeleteProject={onDeleteProject} />
           ))}
         </div>
       ) : (
