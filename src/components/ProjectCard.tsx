@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { ChevronDown, MapPin, Users, } from 'lucide-react';
-import { Project } from '../types';
+import { ChevronDown, MapPin, Users } from 'lucide-react';
+import { ProjectDto } from '../services/projectService';
 
 interface ProjectCardProps {
-  project: Project;
+  project: ProjectDto;
+  onUpdateProject?: (id: string, project: ProjectDto) => Promise<void>;
+  onDeleteProject?: (id: string) => Promise<void>;
   onClick?: () => void;
 }
 

@@ -1,16 +1,19 @@
 import { Plus } from 'lucide-react';
 import CustomerCard from './CustomerCard';
-import { Customer } from '../types';
+import { CustomerDto } from '../services/customerService';
 
 interface CustomersViewProps {
-  customers: Customer[];
-  onCustomersUpdate: (customers: Customer[]) => void;
+  customers: CustomerDto[];
+  onCustomersUpdate: (customers: CustomerDto[]) => void;
+  onCreateCustomer: (customer: CustomerDto) => Promise<void>;
+  onUpdateCustomer: (id: string, customer: CustomerDto) => Promise<void>;
+  onDeleteCustomer: (id: string) => Promise<void>;
 }
 
-export default function CustomersView({ customers, onCustomersUpdate }: CustomersViewProps) {
+export default function CustomersView({ customers, onCustomersUpdate, onCreateCustomer, onUpdateCustomer, onDeleteCustomer }: CustomersViewProps) {
   // === EVENT HANDLER: Add new customer (demo) ===
-  const handleAddCustomer = () => {
-    const newCustomer: Customer = {
+  const handleAddCustomer = async () => {
+    const newCustomer: CustomerDto = {
       id: String(Date.now()),
       name: 'New Customer',
       company: 'Company AB',
@@ -21,6 +24,7 @@ export default function CustomersView({ customers, onCustomersUpdate }: Customer
       totalSpent: 0,
       joinDate: new Date().toISOString().split('T')[0],
     };
+    await onCreateCustomer(newCustomer);
     onCustomersUpdate([...customers, newCustomer]);
   };
 
@@ -45,7 +49,7 @@ export default function CustomersView({ customers, onCustomersUpdate }: Customer
       {customers.length > 0 ? (
         <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {customers.map((customer) => (
-            <CustomerCard key={customer.id} customer={customer} />
+            <CustomerCard key={customer.id} customer={customer} onUpdateCustomer={onUpdateCustomer} onDeleteCustomer={onDeleteCustomer} />
           ))}
         </div>
       ) : (

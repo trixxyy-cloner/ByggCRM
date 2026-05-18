@@ -1,14 +1,21 @@
 import { useState } from "react";
-import { Search, Bell, User } from 'lucide-react';
+import { Search, Bell, User, LogOut, Settings } from 'lucide-react';
 
 interface HeaderProps {
     onSearch: (query: string) => void;
+    onLogout?: () => void;
+    userName?: string;
+    userEmail?: string;
+    hasNewNotifications?: boolean;
+    newNotificationCount?: number;
+    onNotificationsRead?: () => void;
 }
 
-export default function Header({ onSearch }: HeaderProps) {
+export default function Header({ onSearch, onLogout, userName, userEmail, hasNewNotifications }: HeaderProps) {
     // === STATE MANAGEMENT ===
     const [searchQuery, setSearchQuery] = useState('');
     const [showNotifications, setShowNotifications] = useState(false);
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     // === EVENT HANDLER: Search input ===
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,6 +27,17 @@ export default function Header({ onSearch }: HeaderProps) {
     // === EVENT HANDLER: Notifications toggle ===
     const handleNotificationClick = () => {
         setShowNotifications(!showNotifications);
+    };
+
+    // === EVENT HANDLER: Profile menu toggle ===
+    const handleProfileClick = () => {
+        setShowProfileMenu(!showProfileMenu);
+    };
+
+    // === EVENT HANDLER: Logout ===
+    const handleLogout = () => {
+        setShowProfileMenu(false);
+        onLogout?.();
     };
 
     return (
@@ -58,7 +76,7 @@ export default function Header({ onSearch }: HeaderProps) {
                             >
                                 <Bell className="w-5 h-5"/>
                                 {/* Red notification dot */}
-                                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                <span className={`absolute top-1 right-1 w-2 h-2 ${hasNewNotifications ? 'bg-red-500 animate-pulse' : 'bg-gray-300'} rounded-full`}></span>
                             </button>
 
                             {/* === CONDITIONAL RENDERING: Notifications dropdown === */}
@@ -83,13 +101,53 @@ export default function Header({ onSearch }: HeaderProps) {
                             )}
                         </div>
 
-                        {/* USER PROFILE */}
-                        <button className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
-                                <User className="w-5 h-5 text-white"/>
-                            </div>
-                            <span className="text-sm font-medium text-gray-900">Admin</span>
-                        </button>
+                        {/* USER PROFILE DROPDOWN */}
+                        <div className="relative">
+                            <button 
+                                onClick={handleProfileClick}
+                                className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition"
+                            >
+                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                                    <User className="w-5 h-5 text-white"/>
+                                </div>
+                                <span className="text-sm font-medium text-gray-900">{userName}</span>
+                            </button>
+
+                            {/* === PROFILE DROPDOWN MENU === */}
+                            {showProfileMenu && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                                    {/* Header with user info */}
+                                    <div className="px-4 py-3 border-b border-gray-200">
+                                        <p className="text-sm font-semibold text-gray-900">{userName}</p>
+                                        <p className="text-xs text-gray-600 truncate">{userEmail}</p>
+                                    </div>
+
+                                    {/* Menu items */}
+                                    <div className="py-2">
+                                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                            <User className="w-4 h-4" />
+                                            Min profil
+                                        </button>
+                                        <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                                            <Settings className="w-4 h-4" />
+                                            Inställningar
+                                        </button>
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="border-t border-gray-200"></div>
+
+                                    {/* Logout button */}
+                                    <button 
+                                        onClick={handleLogout}
+                                        className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        Logga ut
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
