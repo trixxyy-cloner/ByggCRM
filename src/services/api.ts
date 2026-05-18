@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://byggcrm-app-wgu3p.ondigitalocean.app/api';
+const API_BASE_URL = 'http://localhost:3001/api';
 
 // Helper function to get user-friendly error messages
 function getErrorMessage(status: number, errorText: string): string {
