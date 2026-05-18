@@ -1,142 +1,94 @@
-# ByggCRM v2.0
+# ByggCRM - Construction CRM System
 
-En modern webbapplikation för att hantera byggprojekt och kundrelationer. Utvecklad med React, TypeScript, Tailwind CSS och Vite.
+Ett CRM-system för att hantera byggprojekt och kunder. React frontend + ASP.NET Core backend.
 
-## 📋 Beskrivning
+**Frontend och backend är separata** - Se [Backend README](backend/ByggCRM.Api/README.md) för serversidig setup.
 
-ByggCRM är ett CRM-system speciellt utformat för byggbranschen. Systemet hjälper till att organisera projekter, klientkontakter och projektidéer på ett intuitivt sätt.
+## Funktioner
 
-### 🎯 Funktioner
+- Instrumentpanel med projekt- och kundöversikt
+- Projekt- och kundhantering
+- JWT-autentisering
+- Responsiv design
 
-- **Dashboard**: Överblick över aktiva projekt, kunder och omsättningsmetrik
-- **Projekthantering**: Spåra byggprojekt med framstegsindikatorer och statistik
-- **Kundhantering**: Hantera kundinformation och projekthistorik
-- **Direktstatistik**: Realtidsstatistik sparad i browser localStorage
-- **Responsiv design**: Fungerar sömlöst på skrivbord och mobila enheter
-- **Mjuka animationer**: CSS-övergångar och hover-effekter för bättre användarupplevelse
+## Stack
 
-## 🛠️ Tech Stack
+**Frontend:** React 18, TypeScript, Vite, Tailwind CSS (Port: 5173)  
+**Backend:** .NET 8, ASP.NET Core, SQL Server LocalDB (Port: 3001)
 
-- **Modern Framework**: React 18 med TypeScript
-- **Build Tool**: Vite för snabb utveckling och produktion
-- **Styling**: Tailwind CSS för utility-first CSS
-- **State Management**: React Hooks (useState, useEffect)
-- **Pakethanterare**: npm
+## Installation
 
-## 📚 Förutsättningar
-
-Se till att du har följande installerat på ditt system:
-
-- **Node.js** (v16 eller högre) - [Ladda ner här](https://nodejs.org/)
-- **npm** (kommer med Node.js)
-- **Git** (för versionskontroll)
-
-Verifiera installation:
-
-```bash
-node --version
-npm --version
-```
-
-## 🚀 Installation & Inställning
-
-### 1. Klona Repositoriet
-
-```bash
-git clone https://github.com/trixxyy-cloner/ByggCRM.git
-cd ByggCRM
-```
-
-### 2. Installera Beroenden
+### Frontend
 
 ```bash
 npm install
+npm run dev      # Starta dev server på http://localhost:5173
+npm run build    # Build för produktion → dist/ folder
 ```
 
-Detta installerar alla paket som anges i `package.json`, inklusive:
-- React och React DOM
-- Tailwind CSS
-- Vite
-- TypeScript
-- Lucide React ikoner
+### Backend
 
-## 💻 Lokal utveckling
+Se [Backend README](backend/ByggCRM.Api/README.md)
 
-### Starta Utvecklingsserver
+## API Endpoints
 
-```bash
-npm run dev
+**Base URL:** `http://localhost:3001/api`
+
+### Auth
+```
+POST /auth/login       - Logga in
+POST /auth/register    - Registrera
 ```
 
-Detta startar:
-- Vite dev server (vanligtvis på `http://localhost:5173`)
-- Automatisk öppning av appen i webbläsaren
-- Hot Module Replacement (HMR) för direkta uppdateringar
-
-Appen uppdateras automatiskt när du gör ändringar i källkoden.
-
-### Projektstruktur
-
+### Projects (kräver JWT token)
 ```
-src/
-├── components/             # React-komponenter
-│   ├── Header.tsx         # Header med sökning och notifikationer
-│   ├── Sidebar.tsx        # Navigeringsmeny
-│   ├── StatCard.tsx       # Statistikcards (med localStorage)
-│   ├── ProjectCard.tsx    # Projektkort
-│   ├── CustomerCard.tsx   # Kundkort
-│   ├── DashboardView.tsx  # Dashboard-vy
-│   ├── CustomersView.tsx  # Kund-vy
-│   └── ProjectsView.tsx   # Projekt-vy
-├── styles/                 # CSS-filer
-│   ├── index.css          # Main entry point
-│   ├── animations.css     # Animationer och transitions
-│   ├── tailwind.css       # Tailwind CSS setup
-│   └── theme.css          # Tema och CSS-variabler
-├── types.ts               # TypeScript-interfaces
-├── mockData.ts            # Exempeldata
-├── App.tsx                # Huvudkomponent
-└── main.tsx               # Ingångspunkt
+GET  /projects         - Hämta alla projekt
+POST /projects         - Skapa projekt
+PUT  /projects/{id}    - Uppdatera projekt
+DELETE /projects/{id}  - Ta bort projekt
 ```
 
-## 🏗️ Byggning för produktion
-
-### Skapa Production Build
-
-```bash
-npm run build
+**POST /projects-exempel:**
+```json
+{
+  "name": "Villa Renovering",
+  "client": "Anders",
+  "address": "Storgatan 1",
+  "startDate": "2024-01-15",
+  "endDate": "2024-06-30",
+  "budget": 500000,
+  "status": "ongoing",
+  "progress": 50,
+  "team": ["John", "Jane"]
+}
 ```
 
-Detta kommando:
-- Kör TypeScript-typkontroll (`tsc`)
-- Bygger applikationen med Vite
-- Matar ut optimerade filer till mappen `dist/`
-- Minifierar och bundlar alla tillgångar
-
-Den byggda applikationen är klar för distribution.
-
-### Förhandsgranska Production Build
-
-För att testa produktionsbygget lokalt:
-
-```bash
-npm run preview
+### Customers (kräver JWT token)
+```
+GET  /customers        - Hämta alla kunder
+POST /customers        - Skapa kund
+PUT  /customers/{id}   - Uppdatera kund
+DELETE /customers/{id} - Ta bort kund
 ```
 
-Detta startar en lokal server som serverar produktionsbygget.
+**POST /customers-exempel:**
+```json
+{
+  "name": "Anders Andersson",
+  "company": "AA Konstruktion",
+  "email": "anders@example.com",
+  "phone": "+46-70123456",
+  "address": "Storgatan 1",
+  "totalSpent": 0
+}
+```
 
-## 🌐 Live Applikation
+## Deployment
 
-### Produktions-URL
+Frontend: `npm run build` → ladda upp `dist/` mappen till Digital Ocean  
+Backend: Se [Backend README](backend/ByggCRM.Api/README.md) för deployment instruktioner
 
-**https://byggcrm-app-wgu3p.ondigitalocean.app/**
-
-
-## 📦 Beroenden
-
-Viktiga beroenden (se `package.json` för fullständig lista):
-
-- `react`: React UI-bibliotek
+**Live:** https://byggcrm-app-wgu3p.ondigitalocean.app/
 - `react-dom`: React DOM-rendering
 - `typescript`: Typsäkerhet för JavaScript
 - `vite`: Snabb build-verktyg
@@ -151,6 +103,177 @@ Applikationen använder **localStorage** för att spara data:
 - Applikationstillstånd (där tillämpligt)
 
 Data sparas lokalt i användarens webbläsare och skickas inte till någon server.
+
+## 📡 API-dokumentation
+
+### Autentisering
+
+Alla skyddade endpoints kräver JWT Bearer token i Authorization-headern:
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+```
+
+Tokens skapas vid login/register och sparas i localStorage.
+
+### REST Endpoints
+
+#### 🔐 Autentisering (`/api/auth/`)
+
+| Metod | Endpoint | Beskrivning | Status |
+|-------|----------|-------------|--------|
+| POST | `/api/auth/login` | Logga in användare | ✅ Implementerad |
+| POST | `/api/auth/register` | Registrera ny användare | ✅ Implementerad |
+
+**Login Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "Password123"
+}
+```
+
+**Register Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "Password123",
+  "confirmPassword": "Password123",
+  "fullName": "John Doe"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Successfully logged in",
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+  "user": {
+    "id": "user-id-uuid",
+    "email": "user@example.com",
+    "fullName": "John Doe"
+  }
+}
+```
+
+---
+
+#### 📊 Projekt (`/api/projects/`) - Kräver JWT
+
+| Metod | Endpoint | Beskrivning |
+|-------|----------|-------------|
+| GET | `/api/projects` | Hämta alla projekt |
+| GET | `/api/projects/{id}` | Hämta specifikt projekt |
+| POST | `/api/projects` | Skapa nytt projekt |
+| PUT | `/api/projects/{id}` | Uppdatera projekt |
+| DELETE | `/api/projects/{id}` | Ta bort projekt |
+
+**GET `/api/projects` Response:**
+```json
+[
+  {
+    "id": "proj-123",
+    "name": "Villa Renovering",
+    "client": "Anders Andersson",
+    "address": "Storgatan 1, Stockholm",
+    "startDate": "2024-01-15",
+    "endDate": "2024-06-30",
+    "budget": 500000,
+    "status": "ongoing",
+    "progress": 65,
+    "team": ["John", "Jane", "Bob"]
+  }
+]
+```
+
+**POST `/api/projects` Request:**
+```json
+{
+  "name": "Nytt projekt",
+  "client": "Klientnamn",
+  "address": "Adress",
+  "startDate": "2024-01-15",
+  "endDate": "2024-06-30",
+  "budget": 500000,
+  "status": "planning",
+  "progress": 0,
+  "team": []
+}
+```
+
+---
+
+#### 👥 Kunder (`/api/customers/`) - Kräver JWT
+
+| Metod | Endpoint | Beskrivning |
+|-------|----------|-------------|
+| GET | `/api/customers` | Hämta alla kunder |
+| GET | `/api/customers/{id}` | Hämta specifik kund |
+| POST | `/api/customers` | Skapa ny kund |
+| PUT | `/api/customers/{id}` | Uppdatera kund |
+| DELETE | `/api/customers/{id}` | Ta bort kund |
+
+**GET `/api/customers` Response:**
+```json
+[
+  {
+    "id": "cust-456",
+    "name": "Anders Andersson",
+    "company": "AA Konstruktion AB",
+    "email": "anders@example.com",
+    "phone": "+46-701234567",
+    "address": "Storgatan 1, Stockholm",
+    "projects": 3,
+    "totalSpent": 1500000,
+    "joinDate": "2023-06-15"
+  }
+]
+```
+
+**POST `/api/customers` Request:**
+```json
+{
+  "name": "Ny Kund",
+  "company": "Företagsnamn",
+  "email": "kund@example.com",
+  "phone": "+46-701234567",
+  "address": "Adress",
+  "totalSpent": 0
+}
+```
+
+---
+
+### Frontend API Usage
+
+Frontend använder custom HTTP-client från `src/services/api.ts`:
+
+```typescript
+import { post, get, put, delete } from '@/services/api';
+
+// Exempel: Hämta projekt
+const projects = await get<ProjectDto[]>('/projects', token);
+
+// Exempel: Skapa kund
+const customer = await post<CustomerDto>(
+  '/customers',
+  { name: "Ny Kund", ... },
+  token
+);
+
+// Exempel: Uppdatera projekt
+const updated = await put<ProjectDto>(
+  `/projects/${id}`,
+  { name: "Uppdaterat namn", ... },
+  token
+);
+
+// Exempel: Ta bort kund
+await delete(`/customers/${id}`, token);
+```
+
+**Backend-URL** är konfigurerad i [src/services/api.ts](src/services/api.ts) - justera `API_BASE_URL` för produktion.
 
 ## 🛠️ Bygg- och Deploy-kommandon
 
