@@ -29,6 +29,20 @@ export default function App() {
     }
   }, [token]);
 
+  // === LIFECYCLE HOOK: Recalculate stats when projects/customers change ===
+  useEffect(() => {
+    const activeProjects = projects.filter(p => p.status === 'ongoing').length;
+    const completedProjects = projects.filter(p => p.status === 'completed').length;
+    const totalRevenue = customers.reduce((sum, c) => sum + c.totalSpent, 0);
+
+    setStats({
+      activeProjects,
+      totalCustomers: customers.length,
+      totalRevenue,
+      completedProjects,
+    });
+  }, [projects, customers]);
+
   // === LIFECYCLE HOOK: Track new notifications ===
   useEffect(() => {
     if (projects.length > 0 && customers.length > 0) {
@@ -46,18 +60,6 @@ export default function App() {
 
       setProjects(projectsData);
       setCustomers(customersData);
-
-      // Calculate stats
-      const activeProjects = projectsData.filter(p => p.status === 'ongoing').length;
-      const completedProjects = projectsData.filter(p => p.status === 'completed').length;
-      const totalRevenue = customersData.reduce((sum, c) => sum + c.totalSpent, 0);
-
-      setStats({
-        activeProjects,
-        totalCustomers: customersData.length,
-        totalRevenue,
-        completedProjects,
-      });
     } catch (error) {
       console.error('Failed to load data:', error);
     }
@@ -171,7 +173,7 @@ export default function App() {
 
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
         {/* === SIDEBAR - Navigation between views === */}
-        <Sidebar currentView={currentView} onViewChange={handleViewChange} />
+        <Sidebar currentView={currentView} onViewChange={handleViewChange} stats={stats} />
 
         {/* === MAIN CONTENT - Conditional rendering based on current view === */}
         <main className="flex-1 overflow-y-auto">

@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 
 interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
   color: 'blue' | 'green' | 'purple' | 'orange';
-  trend?: string;
-  storageKey?: string;
-  onUpdate?: (newValue: number) => void;
 }
 
 export default function StatCard({
@@ -15,42 +12,7 @@ export default function StatCard({
   value,
   icon,
   color,
-  trend,
-  storageKey,
-  onUpdate,
 }: StatCardProps) {
-  // === STATE FOR LOCALLY STORED VALUE ===
-  const [displayValue, setDisplayValue] = useState<string | number>(value);
-
-  // === LIFECYCLE HOOK: Load value from localStorage on mount ===
-  useEffect(() => {
-    if (storageKey) {
-      const savedValue = localStorage.getItem(storageKey);
-      if (savedValue) {
-        try {
-          const parsedValue = JSON.parse(savedValue);
-          setDisplayValue(parsedValue);
-        } catch (e) {
-          console.error(`Failed to load ${storageKey} from localStorage`, e);
-        }
-      }
-    }
-  }, [storageKey]);
-
-  // === LIFECYCLE HOOK: Save value to localStorage when it changes ===
-  useEffect(() => {
-    if (storageKey) {
-      localStorage.setItem(storageKey, JSON.stringify(displayValue));
-    }
-  }, [displayValue, storageKey]);
-
-  // === EVENT HANDLER: Update stat value ===
-  const handleUpdate = (newValue: number) => {
-    setDisplayValue(newValue);
-    if (onUpdate) {
-      onUpdate(newValue);
-    }
-  };
 
   // === COLOR MAPPING ===
   const colorStyles = {
@@ -76,7 +38,7 @@ export default function StatCard({
 
   return (
     <div
-      className={`border-l-4 ${colorStyles[color]} rounded-lg p-6 shadow-sm hover-lift hover:shadow-md transition-shadow cursor-pointer`}
+      className={`border-l-4 ${colorStyles[color]} rounded-lg p-6 shadow-sm hover-lift hover:shadow-md transition-shadow`}
     >
       {/* === HEADER: Title with Icon === */}
       <div className="flex items-center justify-between mb-4">
@@ -88,25 +50,8 @@ export default function StatCard({
 
       {/* === MAIN VALUE === */}
       <div className="mb-3">
-        <p className="text-3xl font-bold text-gray-900">{displayValue}</p>
+        <p className="text-3xl font-bold text-gray-900">{value}</p>
       </div>
-
-      {/* === CONDITIONAL RENDERING: Trend or description === */}
-      {trend && (
-        <p className={`text-xs font-medium ${trend.includes('+') ? 'text-green-600' : 'text-gray-600'}`}>
-          {trend}
-        </p>
-      )}
-
-      {/* === INTERACTIVE: Test button to update value === */}
-      {storageKey && (
-        <button
-          onClick={() => handleUpdate(typeof displayValue === 'number' ? displayValue + 1 : 0)}
-          className="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-medium py-2 rounded transition-colors"
-        >
-          Increase (Demo for localStorage)
-        </button>
-      )}
     </div>
   );
 }

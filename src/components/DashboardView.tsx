@@ -30,32 +30,24 @@ export default function DashboardView({
           value={stats.activeProjects}
           icon={<BarChart3 className="w-5 h-5" />}
           color="blue"
-          trend="+2 from last month"
-          storageKey="stat_activeProjects"
         />
         <StatCard
           title="Total Customers"
           value={stats.totalCustomers}
           icon={<Users className="w-5 h-5" />}
           color="green"
-          trend="3 new this month"
-          storageKey="stat_totalCustomers"
         />
         <StatCard
           title="Total Revenue"
           value={`${(stats.totalRevenue / 1000000).toFixed(1)}M`}
           icon={<TrendingUp className="w-5 h-5" />}
           color="purple"
-          trend="In active projects"
-          storageKey="stat_revenue"
         />
         <StatCard
           title="Completed"
           value={stats.completedProjects}
           icon={<CheckCircle className="w-5 h-5" />}
           color="orange"
-          trend="This quarter"
-          storageKey="stat_completedProjects"
         />
       </div>
 

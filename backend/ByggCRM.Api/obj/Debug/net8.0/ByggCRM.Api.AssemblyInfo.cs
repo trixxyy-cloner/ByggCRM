@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ByggCRM.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4c95c0efd36b8d0f58c775254958bb98404fbbb5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bfa5b8673281000cd9dc4cfa9aa6265ee983d8d6")]
 [assembly: System.Reflection.AssemblyProductAttribute("ByggCRM.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ByggCRM.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
