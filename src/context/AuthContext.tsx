@@ -25,12 +25,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const savedToken = authService.getToken();
-    if (savedToken) {
+useEffect(() => {
+  const savedToken = authService.getToken();
+  const savedUser = localStorage.getItem('user');
+
+  if (savedToken && savedUser) {
+    try {
       setToken(savedToken);
+      setUser(JSON.parse(savedUser));
+    } catch (err) {
+      console.error('Failed to load user from localStorage', err);
+      authService.removeToken();
+      localStorage.removeItem('user');
     }
-  }, []);
+  }
+}, []);
 
   const login = async (email: string, password: string) => {
     try {
@@ -42,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         authService.saveToken(response.token);
         setToken(response.token);
         setUser(response.user);
+        localStorage.setItem('user', JSON.stringify(response.user));
       } else {
         throw new Error(response.message);
       }
@@ -64,6 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         authService.saveToken(response.token);
         setToken(response.token);
         setUser(response.user);
+        localStorage.setItem('user', JSON.stringify(response.user));
       } else {
         throw new Error(response.message);
       }
@@ -80,6 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     authService.removeToken();
     setToken(null);
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   return (

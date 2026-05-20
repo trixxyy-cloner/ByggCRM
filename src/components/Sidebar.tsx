@@ -1,12 +1,13 @@
 import { LayoutDashboard, Users, FolderKanban } from 'lucide-react';
-import { ViewType } from '../types';
+import { ViewType, DashboardStats } from '../types';
 
 interface SidebarProps {
   currentView: ViewType;
   onViewChange: (view: ViewType) => void;
+  stats: DashboardStats;
 }
 
-export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
+export default function Sidebar({ currentView, onViewChange, stats }: SidebarProps) {
   // === NAVIGATION MENU ITEMS ===
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -54,19 +55,19 @@ export default function Sidebar({ currentView, onViewChange }: SidebarProps) {
             {/* Active Projects */}
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-600">Active Projects</span>
-              <span className="text-sm font-bold text-blue-700">8</span>
+              <span className="text-sm font-bold text-blue-700">{stats.activeProjects}</span>
             </div>
 
             {/* Total Customers */}
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-600">Total Customers</span>
-              <span className="text-sm font-bold text-green-700">24</span>
+              <span className="text-sm font-bold text-green-700">{stats.totalCustomers}</span>
             </div>
 
             {/* Revenue */}
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-600">Revenue</span>
-              <span className="text-sm font-bold text-purple-700">2.4M</span>
+              <span className="text-sm font-bold text-purple-700">{(stats.totalRevenue / 1000000).toFixed(1)}M</span>
             </div>
           </div>
 
