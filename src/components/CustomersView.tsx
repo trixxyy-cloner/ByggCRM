@@ -1,7 +1,8 @@
-import { Plus, X } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import CustomerCard from './CustomerCard';
 import { CustomerDto } from '../services/customerService';
+import Modal from './Modal';
 
 interface CustomersViewProps {
   customers: CustomerDto[];
@@ -92,80 +93,69 @@ export default function CustomersView({ customers, onCustomersUpdate, onCreateCu
       )}
 
       {/* === MODAL: Create Customer === */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Lägg till ny kund</h3>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Lägg till ny kund">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="name"
+            placeholder="Namn"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="text"
+            name="company"
+            placeholder="Företag"
+            value={formData.company}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="E-post"
+            value={formData.email}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="tel"
+            name="phone"
+            placeholder="Telefon"
+            value={formData.phone}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            name="address"
+            placeholder="Adress"
+            value={formData.address}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Namn"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <input
-                type="text"
-                name="company"
-                placeholder="Företag"
-                value={formData.company}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="E-post"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Telefon"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="text"
-                name="address"
-                placeholder="Adress"
-                value={formData.address}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
-                >
-                  Avbryt
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  Lägg till
-                </button>
-              </div>
-            </form>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+            >
+              Avbryt
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+            >
+              Lägg till
+            </button>
           </div>
-        </div>
-      )}
+        </form>
+      </Modal>
     </div>
   );
 }

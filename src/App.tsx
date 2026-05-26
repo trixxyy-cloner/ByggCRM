@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
+import ErrorBoundary from './components/ErrorBoundary';
 import DashboardView from './components/DashboardView';
 import CustomersView from './components/CustomersView';
 import ProjectsView from './components/ProjectsView';
@@ -159,6 +160,7 @@ export default function App() {
   }
 
   return (
+    <ErrorBoundary>
     <div className="flex flex-col h-screen bg-gray-50">
       {/* === HEADER - Search and notifications === */}
       <Header 
@@ -205,5 +207,6 @@ export default function App() {
         </main>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }
