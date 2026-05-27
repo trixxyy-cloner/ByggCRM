@@ -3,6 +3,8 @@ import { useState } from 'react';
 import CustomerCard from './CustomerCard';
 import { CustomerDto } from '../services/customerService';
 import Modal from './Modal';
+import FormInput from './FormInput';
+import LoadingSpinner from './LoadingSpinner';
 
 interface CustomersViewProps {
   customers: CustomerDto[];
@@ -14,6 +16,7 @@ interface CustomersViewProps {
 
 export default function CustomersView({ customers, onCustomersUpdate, onCreateCustomer, onUpdateCustomer, onDeleteCustomer }: CustomersViewProps) {
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -38,17 +41,22 @@ export default function CustomersView({ customers, onCustomersUpdate, onCreateCu
       return;
     }
 
-    const newCustomer: CustomerDto = {
-      id: String(Date.now()),
-      ...formData,
-      projects: 0,
-      joinDate: new Date().toISOString(),
-    };
+    setIsLoading(true);
+    try {
+      const newCustomer: CustomerDto = {
+        id: String(Date.now()),
+        ...formData,
+        projects: 0,
+        joinDate: new Date().toISOString(),
+      };
 
-    await onCreateCustomer(newCustomer);
-    onCustomersUpdate([...customers, newCustomer]);
-    setFormData({ name: '', company: '', email: '', phone: '', address: '', totalSpent: 0 });
-    setShowModal(false);
+      await onCreateCustomer(newCustomer);
+      onCustomersUpdate([...customers, newCustomer]);
+      setFormData({ name: '', company: '', email: '', phone: '', address: '', totalSpent: 0 });
+      setShowModal(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -95,61 +103,66 @@ export default function CustomersView({ customers, onCustomersUpdate, onCreateCu
       {/* === MODAL: Create Customer === */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Lägg till ny kund">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
+          {/* === LOADING SPINNER === */}
+          {isLoading && <LoadingSpinner text="Sparar kund..." />}
+          
+          <FormInput
+            label="Namn"
             type="text"
             name="name"
             placeholder="Namn"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <input
+          <FormInput
+            label="Företag"
             type="text"
             name="company"
             placeholder="Företag"
             value={formData.company}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <input
+          <FormInput
+            label="E-post"
             type="email"
             name="email"
             placeholder="E-post"
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <input
+          <FormInput
+            label="Telefon"
             type="tel"
             name="phone"
             placeholder="Telefon"
             value={formData.phone}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input
+          <FormInput
+            label="Adress"
             type="text"
             name="address"
             placeholder="Adress"
             value={formData.address}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           <div className="flex gap-3 pt-4">
             <button
               type="button"
               onClick={() => setShowModal(false)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+              disabled={isLoading}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Avbryt
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              disabled={isLoading}
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Lägg till
             </button>

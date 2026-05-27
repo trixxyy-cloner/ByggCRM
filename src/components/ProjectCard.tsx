@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ChevronDown, MapPin, Users } from 'lucide-react';
+import { ChevronDown, MapPin, Users, Trash2 } from 'lucide-react';
 import { ProjectDto } from '../services/projectService';
+import ConfirmDialog from './ConfirmDialog';
 
 interface ProjectCardProps {
   project: ProjectDto;
@@ -9,9 +10,10 @@ interface ProjectCardProps {
   onClick?: () => void;
 }
 
-export default function ProjectCard({ project, onClick }: ProjectCardProps) {
+export default function ProjectCard({ project, onClick, onDeleteProject }: ProjectCardProps) {
   // === STATE: Track if card is expanded ===
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // === EVENT HANDLER: Toggle expand ===
   const handleExpandClick = (e: React.MouseEvent) => {
@@ -23,6 +25,19 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
   const handleCardClick = () => {
     if (onClick) {
       onClick();
+    }
+  };
+
+  // === EVENT HANDLER: Delete project ===
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (onDeleteProject) {
+      await onDeleteProject(project.id);
+      setShowConfirm(false);
     }
   };
 
@@ -54,14 +69,23 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
           <h3 className="text-lg font-semibold text-gray-900 mb-1">{project.name}</h3>
           <p className="text-sm text-gray-500">{project.client}</p>
         </div>
-        <button
-          onClick={handleExpandClick}
-          className={`p-2 hover:bg-gray-100 rounded-lg transition-transform ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-        >
-          <ChevronDown className="w-5 h-5 text-gray-600" />
-        </button>
+        <div className="flex gap-1">
+          <button
+            onClick={handleExpandClick}
+            className={`p-2 hover:bg-gray-100 rounded-lg transition-transform ${
+              isExpanded ? 'rotate-180' : ''
+            }`}
+          >
+            <ChevronDown className="w-5 h-5 text-gray-600" />
+          </button>
+          <button
+            onClick={handleDeleteClick}
+            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+            title="Radera projekt"
+          >
+            <Trash2 className="w-5 h-5 text-gray-400 hover:text-red-600" />
+          </button>
+        </div>
       </div>
 
       {/* === STATUS BADGE === */}
@@ -127,6 +151,18 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
           </div>
         </div>
       )}
+
+      {/* === CONFIRM DELETE DIALOG === */}
+      <ConfirmDialog
+        isOpen={showConfirm}
+        title="Radera projekt?"
+        message={`Är du säker på att du vill radera "${project.name}"? Denna åtgärd kan inte ångras.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowConfirm(false)}
+        confirmText="Radera"
+        cancelText="Avbryt"
+        isDangerous={true}
+      />
     </div>
   );
 }

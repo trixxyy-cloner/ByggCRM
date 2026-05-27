@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Briefcase } from 'lucide-react';
+import { Mail, Phone, MapPin, Briefcase, Trash2 } from 'lucide-react';
 import { CustomerDto } from '../services/customerService';
+import ConfirmDialog from './ConfirmDialog';
 
 interface CustomerCardProps {
   customer: CustomerDto;
@@ -9,9 +10,10 @@ interface CustomerCardProps {
   onClick?: () => void;
 }
 
-export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
+export default function CustomerCard({ customer, onClick, onDeleteCustomer }: CustomerCardProps) {
   // === STATE: Track if contact info is visible ===
   const [showContact, setShowContact] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   // === EVENT HANDLER: Toggle contact visibility ===
   const handleToggleContact = (e: React.MouseEvent) => {
@@ -23,6 +25,19 @@ export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
   const handleCardClick = () => {
     if (onClick) {
       onClick();
+    }
+  };
+
+  // === EVENT HANDLER: Delete customer ===
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (onDeleteCustomer) {
+      await onDeleteCustomer(customer.id);
+      setShowConfirm(false);
     }
   };
 
@@ -43,9 +58,18 @@ export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
             {customer.company}
           </p>
         </div>
-        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
-          {customer.projects} project{customer.projects !== 1 ? 's' : ''}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+            {customer.projects} project{customer.projects !== 1 ? 's' : ''}
+          </span>
+          <button
+            onClick={handleDeleteClick}
+            className="p-1 hover:bg-red-50 rounded-lg transition-colors"
+            title="Radera kund"
+          >
+            <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-600" />
+          </button>
+        </div>
       </div>
 
       {/* === ADDRESS SECTION === */}
@@ -96,6 +120,18 @@ export default function CustomerCard({ customer, onClick }: CustomerCardProps) {
           </div>
         </div>
       )}
+
+      {/* === CONFIRM DELETE DIALOG === */}
+      <ConfirmDialog
+        isOpen={showConfirm}
+        title="Radera kund?"
+        message={`Är du säker på att du vill radera "${customer.name}"? Denna åtgärd kan inte ångras.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowConfirm(false)}
+        confirmText="Radera"
+        cancelText="Avbryt"
+        isDangerous={true}
+      />
     </div>
   );
 }

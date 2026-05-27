@@ -1,20 +1,26 @@
 import { useState } from "react";
-import { Search, Bell, User, LogOut, Settings } from 'lucide-react';
+import { Search, User, LogOut, Settings } from 'lucide-react';
+import NotificationBell from './NotificationBell';
+
+interface Notification {
+  id: string;
+  message: string;
+  timestamp: Date;
+}
 
 interface HeaderProps {
     onSearch: (query: string) => void;
     onLogout?: () => void;
     userName?: string;
     userEmail?: string;
-    hasNewNotifications?: boolean;
-    newNotificationCount?: number;
-    onNotificationsRead?: () => void;
+    notifications?: Notification[];
+    onClearNotifications?: () => void;
+    onDismissNotification?: (id: string) => void;
 }
 
-export default function Header({ onSearch, onLogout, userName, userEmail, hasNewNotifications }: HeaderProps) {
+export default function Header({ onSearch, onLogout, userName, userEmail, notifications = [], onClearNotifications, onDismissNotification }: HeaderProps) {
     // === STATE MANAGEMENT ===
     const [searchQuery, setSearchQuery] = useState('');
-    const [showNotifications, setShowNotifications] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     // === EVENT HANDLER: Search input ===
@@ -22,11 +28,6 @@ export default function Header({ onSearch, onLogout, userName, userEmail, hasNew
         const query = e.target.value;
         setSearchQuery(query);
         onSearch(query);
-    };
-
-    // === EVENT HANDLER: Notifications toggle ===
-    const handleNotificationClick = () => {
-        setShowNotifications(!showNotifications);
     };
 
     // === EVENT HANDLER: Profile menu toggle ===
@@ -68,38 +69,12 @@ export default function Header({ onSearch, onLogout, userName, userEmail, hasNew
 
                     {/* === RIGHT SECTION: NOTIFICATIONS & PROFILE === */}
                     <div className="flex items-center gap-4">
-                        {/* NOTIFICATIONS BUTTON */}
-                        <div className="relative">
-                            <button
-                                onClick={handleNotificationClick}
-                                className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
-                            >
-                                <Bell className="w-5 h-5"/>
-                                {/* Red notification dot */}
-                                <span className={`absolute top-1 right-1 w-2 h-2 ${hasNewNotifications ? 'bg-red-500 animate-pulse' : 'bg-gray-300'} rounded-full`}></span>
-                            </button>
-
-                            {/* === CONDITIONAL RENDERING: Notifications dropdown === */}
-                            {showNotifications && (
-                                <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-50">
-                                    <h3 className="font-semibold text-gray-900 mb-3">Notifications</h3>
-                                    <div className="space-y-2 max-h-64 overflow-y-auto">
-                                        <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-l-blue-500">
-                                            <p className="text-sm font-medium text-gray-900">New project assigned</p>
-                                            <p className="text-xs text-gray-600">2 hours ago</p>
-                                        </div>
-                                        <div className="p-3 bg-green-50 rounded-lg border-l-4 border-l-green-500">
-                                            <p className="text-sm font-medium text-gray-900">Customer updated</p>
-                                            <p className="text-xs text-gray-600">1 hour ago</p>
-                                        </div>
-                                        <div className="p-3 bg-yellow-50 rounded-lg border-l-4 border-l-yellow-500">
-                                            <p className="text-sm font-medium text-gray-900">Deadline approaching</p>
-                                            <p className="text-xs text-gray-600">30 minutes ago</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        {/* === NOTIFICATIONS === */}
+                        <NotificationBell 
+                            notifications={notifications}
+                            onClear={onClearNotifications}
+                            onDismiss={onDismissNotification}
+                        />
 
                         {/* USER PROFILE DROPDOWN */}
                         <div className="relative">
