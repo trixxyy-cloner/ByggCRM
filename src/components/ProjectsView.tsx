@@ -3,6 +3,8 @@ import { Plus } from 'lucide-react';
 import ProjectCard from './ProjectCard';
 import { ProjectDto } from '../services/projectService';
 import Modal from './Modal';
+import FormInput from './FormInput';
+import LoadingSpinner from './LoadingSpinner';
 
 interface ProjectsViewProps {
   projects: ProjectDto[];
@@ -15,6 +17,7 @@ interface ProjectsViewProps {
 export default function ProjectsView({ projects, onProjectsUpdate, onCreateProject, onUpdateProject, onDeleteProject }: ProjectsViewProps) {
   const [statusFilter, setStatusFilter] = useState<'all' | 'planning' | 'ongoing' | 'completed'>('all');
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     client: '',
@@ -42,17 +45,22 @@ export default function ProjectsView({ projects, onProjectsUpdate, onCreateProje
       return;
     }
 
-    const newProject: ProjectDto = {
-      id: String(Date.now()),
-      ...formData,
-      progress: 0,
-      team: [],
-    };
+    setIsLoading(true);
+    try {
+      const newProject: ProjectDto = {
+        id: String(Date.now()),
+        ...formData,
+        progress: 0,
+        team: [],
+      };
 
-    await onCreateProject(newProject);
-    onProjectsUpdate([...projects, newProject]);
-    setFormData({ name: '', client: '', address: '', startDate: '', endDate: '', budget: 0, status: 'planning' });
-    setShowModal(false);
+      await onCreateProject(newProject);
+      onProjectsUpdate([...projects, newProject]);
+      setFormData({ name: '', client: '', address: '', startDate: '', endDate: '', budget: 0, status: 'planning' });
+      setShowModal(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -117,64 +125,58 @@ export default function ProjectsView({ projects, onProjectsUpdate, onCreateProje
       {/* === MODAL: Create Project === */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Skapa nytt projekt">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
+          {/* === LOADING SPINNER === */}
+          {isLoading && <LoadingSpinner text="Sparar projekt..." />}
+          
+          <FormInput
+            label="Projektnamn"
             type="text"
             name="name"
             placeholder="Projektnamn"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <input
+          <FormInput
+            label="Klient"
             type="text"
             name="client"
             placeholder="Klient"
             value={formData.client}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <input
+          <FormInput
+            label="Adress"
             type="text"
             name="address"
             placeholder="Adress"
             value={formData.address}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Startdatum</label>
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Slutdatum</label>
-            <input
-              type="date"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Budget (SEK)</label>
-            <input
-              type="number"
-              name="budget"
-              placeholder="0"
-              value={formData.budget}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+          <FormInput
+            label="Startdatum"
+            type="date"
+            name="startDate"
+            value={formData.startDate}
+            onChange={handleInputChange}
+          />
+          <FormInput
+            label="Slutdatum"
+            type="date"
+            name="endDate"
+            value={formData.endDate}
+            onChange={handleInputChange}
+          />
+          <FormInput
+            label="Budget (SEK)"
+            type="number"
+            name="budget"
+            placeholder="0"
+            value={formData.budget}
+            onChange={handleInputChange}
+          />
           <select
             name="status"
             value={formData.status}
@@ -190,13 +192,15 @@ export default function ProjectsView({ projects, onProjectsUpdate, onCreateProje
             <button
               type="button"
               onClick={() => setShowModal(false)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+              disabled={isLoading}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Avbryt
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              disabled={isLoading}
+              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Skapa
             </button>

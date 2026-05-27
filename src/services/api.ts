@@ -130,6 +130,13 @@ export const api = {
       throw new Error(friendlyMessage);
     }
 
-    return response.json();
+    // Check if response has JSON content before parsing
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    }
+
+    // Return empty object for delete operations with no response body
+    return {} as T;
   },
 };

@@ -11,6 +11,12 @@ import LoginPage from './components/LoginPage';
 import { projectService, ProjectDto } from './services/projectService';
 import { customerService, CustomerDto } from './services/customerService';
 
+interface Notification {
+  id: string;
+  message: string;
+  timestamp: Date;
+}
+
 export default function App() {
   const { user, token, logout } = useAuth();
 
@@ -20,8 +26,7 @@ export default function App() {
   const [projects, setProjects] = useState<ProjectDto[]>([]);
   const [customers, setCustomers] = useState<CustomerDto[]>([]);
   const [stats, setStats] = useState<DashboardStats>({ activeProjects: 0, totalCustomers: 0, totalRevenue: 0, completedProjects: 0 });
-  const [hasNewNotifications, setHasNewNotifications] = useState(false);
-  const [newNotificationCount, setNewNotificationCount] = useState(0);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // === LIFECYCLE HOOK: Fetch data from backend ===
   useEffect(() => {
@@ -42,14 +47,6 @@ export default function App() {
       totalRevenue,
       completedProjects,
     });
-  }, [projects, customers]);
-
-  // === LIFECYCLE HOOK: Track new notifications ===
-  useEffect(() => {
-    if (projects.length > 0 && customers.length > 0) {
-      setHasNewNotifications(true);
-      setNewNotificationCount(projects.length + customers.length);
-    }
   }, [projects, customers]);
 
   const loadData = async () => {
@@ -99,6 +96,14 @@ export default function App() {
     try {
       const created = await projectService.createProject(newProject, token!);
       setProjects([...projects, created]);
+      
+      // Add notification
+      const notification: Notification = {
+        id: String(Date.now()),
+        message: `Projekt "${created.name}" skapat!`,
+        timestamp: new Date(),
+      };
+      setNotifications([notification, ...notifications]);
     } catch (error) {
       console.error('Failed to create project:', error);
     }
@@ -117,10 +122,32 @@ export default function App() {
   // === DELETE PROJECT ===
   const handleDeleteProject = async (projectId: string) => {
     try {
+      const projectName = projects.find(p => p.id === projectId)?.name || 'Projekt';
       await projectService.deleteProject(projectId, token!);
       setProjects(projects.filter(p => p.id !== projectId));
+      
+      // Add notification
+      const notification: Notification = {
+        id: String(Date.now()),
+        message: `Projekt "${projectName}" raderat`,
+        timestamp: new Date(),
+      };
+      setNotifications([notification, ...notifications]);
     } catch (error) {
-      console.error('Failed to delete project:', error);
+      // If it's a 404, still remove from frontend (project doesn't exist on backend)
+      if ((error as Error).message.includes('Resursen hittades inte')) {
+        const projectName = projects.find(p => p.id === projectId)?.name || 'Projekt';
+        setProjects(projects.filter(p => p.id !== projectId));
+        
+        const notification: Notification = {
+          id: String(Date.now()),
+          message: `Projekt "${projectName}" raderat (fanns inte på server)`,
+          timestamp: new Date(),
+        };
+        setNotifications([notification, ...notifications]);
+      } else {
+        console.error('Failed to delete project:', error);
+      }
     }
   };
 
@@ -129,6 +156,14 @@ export default function App() {
     try {
       const created = await customerService.createCustomer(newCustomer, token!);
       setCustomers([...customers, created]);
+      
+      // Add notification
+      const notification: Notification = {
+        id: String(Date.now()),
+        message: `Kund "${created.name}" tillagd!`,
+        timestamp: new Date(),
+      };
+      setNotifications([notification, ...notifications]);
     } catch (error) {
       console.error('Failed to create customer:', error);
     }
@@ -147,10 +182,32 @@ export default function App() {
   // === DELETE CUSTOMER ===
   const handleDeleteCustomer = async (customerId: string) => {
     try {
+      const customerName = customers.find(c => c.id === customerId)?.name || 'Kund';
       await customerService.deleteCustomer(customerId, token!);
       setCustomers(customers.filter(c => c.id !== customerId));
+      
+      // Add notification
+      const notification: Notification = {
+        id: String(Date.now()),
+        message: `Kund "${customerName}" raderat`,
+        timestamp: new Date(),
+      };
+      setNotifications([notification, ...notifications]);
     } catch (error) {
-      console.error('Failed to delete customer:', error);
+      // If it's a 404, still remove from frontend (customer doesn't exist on backend)
+      if ((error as Error).message.includes('Resursen hittades inte')) {
+        const customerName = customers.find(c => c.id === customerId)?.name || 'Kund';
+        setCustomers(customers.filter(c => c.id !== customerId));
+        
+        const notification: Notification = {
+          id: String(Date.now()),
+          message: `Kund "${customerName}" raderat (fanns inte på server)`,
+          timestamp: new Date(),
+        };
+        setNotifications([notification, ...notifications]);
+      } else {
+        console.error('Failed to delete customer:', error);
+      }
     }
   };
 
@@ -168,9 +225,9 @@ export default function App() {
         onLogout={handleLogout} 
         userName={user?.fullName}
         userEmail={user?.email}
-        hasNewNotifications={hasNewNotifications}
-        newNotificationCount={newNotificationCount}
-        onNotificationsRead={() => setHasNewNotifications(false)}
+        notifications={notifications}
+        onClearNotifications={() => setNotifications([])}
+        onDismissNotification={(id) => setNotifications(notifications.filter(n => n.id !== id))}
       />
 
       <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
