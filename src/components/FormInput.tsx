@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
@@ -50,3 +51,20 @@ export default function FormInput({
     );
 }
 
+FormInput.propTypes = {
+    label: PropTypes.string,
+    error: PropTypes.string,
+    helpText: PropTypes.string,
+    containerClassName: PropTypes.string,
+    required: PropTypes.bool,
+    type: PropTypes.string,
+    name: PropTypes.string,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    onChange: PropTypes.func,
+    placeholder: PropTypes.string,
+};
+
+FormInput.defaultProps = {
+    type: 'text',
+    required: false,
+};

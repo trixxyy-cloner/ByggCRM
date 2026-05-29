@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 interface LoadingSpinnerProps {
     text?: string;
     size?: 'sm' | 'md' | 'lg';
@@ -39,3 +41,14 @@ export default function LoadingSpinner({
     // Inline mode
     return spinnerContent;
 }
+
+LoadingSpinner.propTypes = {
+    text: PropTypes.string,
+    size: PropTypes.oneOf(['sm', 'md', 'lg']),
+    overlay: PropTypes.bool,
+};
+
+LoadingSpinner.defaultProps = {
+    size: 'md',
+    overlay: false,
+};
