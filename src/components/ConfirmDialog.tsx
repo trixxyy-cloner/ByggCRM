@@ -1,5 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import Modal from './Modal';
+import PropTypes from 'prop-types';
 
 /** ConfirmDialog - Confirmation modal for destructive actions */
 
@@ -62,3 +63,20 @@ export default function ConfirmDialog({
         </Modal>
     );
 }
+
+ConfirmDialog.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    title: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired,
+    onConfirm: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    confirmText: PropTypes.string,
+    cancelText: PropTypes.string,
+    isDangerous: PropTypes.bool,
+};
+
+ConfirmDialog.defaultProps = {
+    confirmText: 'Bekräfta',
+    cancelText: 'Avbryt',
+    isDangerous: false,
+};

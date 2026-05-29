@@ -42,6 +42,14 @@ Det visar vad felet var och en knapp för att reloada. Om användaren vill kan d
 
 ---
 
+## Refaktorering och kodkvalitet
+
+Efter att ha byggt ProjectsView och CustomersView märkte jag att båda komponenterna hade nästan identisk kod - samma form-logik, samma buttons, samma empty-state UI. Istället för att låta koden bli duplicerad refaktorerade jag och skapade två nya återanvändningsbara komponenter: EmptyState och FormButtonGroup. Det eliminerade en hel del rader duplicerad kod och gjorde komponenterna mycket renare.
+
+Senare gjorde jag en större refaktorering i App.tsx. Där hade jag sex stycken CRUD-funktioner (handleCreateProject, handleUpdateProject, handleDeleteProject, handleCreateCustomer, handleUpdateCustomer, handleDeleteCustomer) som alla hade nästan identisk logik - samma error handling, samma notification-setup, bara olika serviceanrop. Jag refaktorerade detta och ersatte dem med tre generiska funktioner: createEntity, updateEntity och deleteEntity. Det eliminerade en hel del rader duplicerad kod och gör det mycket lättare att underhålla koden framöver.
+
+Genom denna refaktorering blev koden mycket renare och lättare att bygga vidare på. Om jag senare vill lägga till nya entiteter (typ Products eller Teams) behöver jag bara skapa nya wrappers som använder samma generiska funktioner.
+
 **Slutnoter:**
 - 16 React komponenter
 - Alla CRUD-operationer fungerar

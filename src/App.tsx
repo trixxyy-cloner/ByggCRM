@@ -91,125 +91,103 @@ export default function App() {
     logout();
   };
 
-  // === CREATE PROJECT ===
-  const handleCreateProject = async (newProject: ProjectDto) => {
+  // === GENERIC CRUD HANDLERS ===
+  const createEntity = async <T extends { id: string }>(
+    entity: T,
+    setState: (items: T[]) => void,
+    state: T[],
+    service: { create: (item: T, token: string) => Promise<T> },
+    entityName: string
+  ) => {
     try {
-      const created = await projectService.createProject(newProject, token!);
-      setProjects([...projects, created]);
+      const created = await service.create(entity, token!);
+      setState([...state, created]);
       
-      // Add notification
       const notification: Notification = {
         id: String(Date.now()),
-        message: `Projekt "${created.name}" skapat!`,
+        message: `${entityName} "${(created as any).name || (created as any).company}" skapad!`,
         timestamp: new Date(),
       };
       setNotifications([notification, ...notifications]);
     } catch (error) {
-      console.error('Failed to create project:', error);
+      console.error(`Failed to create ${entityName}:`, error);
     }
   };
 
-  // === UPDATE PROJECT ===
-  const handleUpdateProject = async (projectId: string, updatedProject: ProjectDto) => {
+  const updateEntity = async <T extends { id: string }>(
+    entityId: string,
+    entity: T,
+    setState: (items: T[]) => void,
+    state: T[],
+    service: { update: (id: string, item: T, token: string) => Promise<T> },
+    entityName: string
+  ) => {
     try {
-      const updated = await projectService.updateProject(projectId, updatedProject, token!);
-      setProjects(projects.map(p => p.id === projectId ? updated : p));
+      const updated = await service.update(entityId, entity, token!);
+      setState(state.map(item => item.id === entityId ? updated : item));
     } catch (error) {
-      console.error('Failed to update project:', error);
+      console.error(`Failed to update ${entityName}:`, error);
     }
   };
 
-  // === DELETE PROJECT ===
-  const handleDeleteProject = async (projectId: string) => {
+  const deleteEntity = async <T extends { id: string; name?: string; company?: string }>(
+    entityId: string,
+    setState: (items: T[]) => void,
+    state: T[],
+    service: { delete: (id: string, token: string) => Promise<void> },
+    entityName: string
+  ) => {
     try {
-      const projectName = projects.find(p => p.id === projectId)?.name || 'Projekt';
-      await projectService.deleteProject(projectId, token!);
-      setProjects(projects.filter(p => p.id !== projectId));
+      const entityDisplay = state.find(item => item.id === entityId);
+      const displayName = (entityDisplay as any)?.name || (entityDisplay as any)?.company || entityName;
       
-      // Add notification
+      await service.delete(entityId, token!);
+      setState(state.filter(item => item.id !== entityId));
+      
       const notification: Notification = {
         id: String(Date.now()),
-        message: `Projekt "${projectName}" raderat`,
+        message: `${entityName} "${displayName}" raderat`,
         timestamp: new Date(),
       };
       setNotifications([notification, ...notifications]);
     } catch (error) {
-      // If it's a 404, still remove from frontend (project doesn't exist on backend)
+      // If it's a 404, still remove from frontend
       if ((error as Error).message.includes('Resursen hittades inte')) {
-        const projectName = projects.find(p => p.id === projectId)?.name || 'Projekt';
-        setProjects(projects.filter(p => p.id !== projectId));
+        const entityDisplay = state.find(item => item.id === entityId);
+        const displayName = (entityDisplay as any)?.name || (entityDisplay as any)?.company || entityName;
+        setState(state.filter(item => item.id !== entityId));
         
         const notification: Notification = {
           id: String(Date.now()),
-          message: `Projekt "${projectName}" raderat (fanns inte på server)`,
+          message: `${entityName} "${displayName}" raderat (fanns inte på server)`,
           timestamp: new Date(),
         };
         setNotifications([notification, ...notifications]);
       } else {
-        console.error('Failed to delete project:', error);
+        console.error(`Failed to delete ${entityName}:`, error);
       }
     }
   };
 
-  // === CREATE CUSTOMER ===
-  const handleCreateCustomer = async (newCustomer: CustomerDto) => {
-    try {
-      const created = await customerService.createCustomer(newCustomer, token!);
-      setCustomers([...customers, created]);
-      
-      // Add notification
-      const notification: Notification = {
-        id: String(Date.now()),
-        message: `Kund "${created.name}" tillagd!`,
-        timestamp: new Date(),
-      };
-      setNotifications([notification, ...notifications]);
-    } catch (error) {
-      console.error('Failed to create customer:', error);
-    }
-  };
+  // === WRAPPERS FOR PROJECTS ===
+  const handleCreateProject = (newProject: ProjectDto) =>
+    createEntity(newProject, setProjects, projects, projectService as any, 'Projekt');
 
-  // === UPDATE CUSTOMER ===
-  const handleUpdateCustomer = async (customerId: string, updatedCustomer: CustomerDto) => {
-    try {
-      const updated = await customerService.updateCustomer(customerId, updatedCustomer, token!);
-      setCustomers(customers.map(c => c.id === customerId ? updated : c));
-    } catch (error) {
-      console.error('Failed to update customer:', error);
-    }
-  };
+  const handleUpdateProject = (projectId: string, updatedProject: ProjectDto) =>
+    updateEntity(projectId, updatedProject, setProjects, projects, projectService as any, 'Projekt');
 
-  // === DELETE CUSTOMER ===
-  const handleDeleteCustomer = async (customerId: string) => {
-    try {
-      const customerName = customers.find(c => c.id === customerId)?.name || 'Kund';
-      await customerService.deleteCustomer(customerId, token!);
-      setCustomers(customers.filter(c => c.id !== customerId));
-      
-      // Add notification
-      const notification: Notification = {
-        id: String(Date.now()),
-        message: `Kund "${customerName}" raderat`,
-        timestamp: new Date(),
-      };
-      setNotifications([notification, ...notifications]);
-    } catch (error) {
-      // If it's a 404, still remove from frontend (customer doesn't exist on backend)
-      if ((error as Error).message.includes('Resursen hittades inte')) {
-        const customerName = customers.find(c => c.id === customerId)?.name || 'Kund';
-        setCustomers(customers.filter(c => c.id !== customerId));
-        
-        const notification: Notification = {
-          id: String(Date.now()),
-          message: `Kund "${customerName}" raderat (fanns inte på server)`,
-          timestamp: new Date(),
-        };
-        setNotifications([notification, ...notifications]);
-      } else {
-        console.error('Failed to delete customer:', error);
-      }
-    }
-  };
+  const handleDeleteProject = (projectId: string) =>
+    deleteEntity(projectId, setProjects, projects, projectService as any, 'Projekt');
+
+  // === WRAPPERS FOR CUSTOMERS ===
+  const handleCreateCustomer = (newCustomer: CustomerDto) =>
+    createEntity(newCustomer, setCustomers, customers, customerService as any, 'Kund');
+
+  const handleUpdateCustomer = (customerId: string, updatedCustomer: CustomerDto) =>
+    updateEntity(customerId, updatedCustomer, setCustomers, customers, customerService as any, 'Kund');
+
+  const handleDeleteCustomer = (customerId: string) =>
+    deleteEntity(customerId, setCustomers, customers, customerService as any, 'Kund');
 
   // === REDIRECT TO LOGIN IF NOT AUTHENTICATED ===
   if (!token || !user) {

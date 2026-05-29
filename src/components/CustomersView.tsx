@@ -5,6 +5,8 @@ import { CustomerDto } from '../services/customerService';
 import Modal from './Modal';
 import FormInput from './FormInput';
 import LoadingSpinner from './LoadingSpinner';
+import EmptyState from './EmptyState';
+import FormButtonGroup from './FormButtonGroup';
 
 interface CustomersViewProps {
   customers: CustomerDto[];
@@ -84,20 +86,12 @@ export default function CustomersView({ customers, onCustomersUpdate, onCreateCu
           ))}
         </div>
       ) : (
-        // === CONDITIONAL RENDERING: Empty State ===
-        <div className="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-lg">
-          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mb-4">
-            <Plus className="w-6 h-6 text-gray-400" />
-          </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-1">No customers yet</h3>
-          <p className="text-gray-600 text-sm mb-6">Add your first customer to get started</p>
-          <button
-            onClick={() => setShowModal(true)}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-          >
-            Add First Customer
-          </button>
-        </div>
+        <EmptyState
+          title="No customers yet"
+          description="Add your first customer to get started"
+          buttonText="Add First Customer"
+          onButtonClick={() => setShowModal(true)}
+        />
       )}
 
       {/* === MODAL: Create Customer === */}
@@ -150,23 +144,12 @@ export default function CustomersView({ customers, onCustomersUpdate, onCreateCu
             onChange={handleInputChange}
           />
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              disabled={isLoading}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Avbryt
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Lägg till
-            </button>
-          </div>
+          <FormButtonGroup
+            onCancel={() => setShowModal(false)}
+            submitText="Lägg till"
+            cancelText="Avbryt"
+            isLoading={isLoading}
+          />
         </form>
       </Modal>
     </div>
